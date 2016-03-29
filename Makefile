@@ -28,7 +28,7 @@ TSRC		= setTest.c runTest.c CuTest.c
 INC		=
 
 # Global defines
-DEFINE		=
+DEFINE		= -D_GNU_SOURCE
 
 # Linker flags
 LFLAGS		= -Llib/ -lkhmap

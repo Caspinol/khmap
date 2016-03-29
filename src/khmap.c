@@ -40,13 +40,13 @@ struct khmap_t{
 
 static size_t _hash(char *str){
 	
-    uint32_t hash = 5381;
-    int c;
-
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
-
-    return hash;
+	uint32_t hash = 5381;
+	int c;
+	
+	while ((c = *str++))
+		hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+	
+	return hash;
 }
 
 static bool _compare(void *c1, void *c2){
