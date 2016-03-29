@@ -45,30 +45,66 @@ void TestHashLibBasic(CuTest *tc){
 
 void TestHashLibResize(CuTest *tc){
 
-	int five = 5;
-	char **key1 = malloc(15000 * sizeof(char *));
+	int rounds = 100000;
+	
+	char *five = "Five";
+	char **key1 = malloc(rounds * sizeof(char *));
 
-	for(int i = 0; i < 15000; i++){
+	/* Prepare the keys */
+	for(int i = 0; i < rounds; i++){
 		asprintf(&key1[i], "key_%d", i);
+	}
+	
+	clock_t start, diff;
+	int msec;
+	
+	start = clock();
+	for(int i = 0; i < rounds; i++){
+		khmap_insert(hm, key1[i], five);
+	
+	}
+	diff = clock() - start;
+	msec = diff * 1000 / CLOCKS_PER_SEC;
+	printf("Time taken %d[s] %d[ms] for [%d] inserts\n", msec/1000, msec%1000, rounds);
 
-		khmap_insert(hm, key1[i], &five);
+	start = clock();
+	for(int i = 0; i < rounds; i++){
+
+		char *res = khmap_get(hm, key1[i]);
+		CuAssertPtrNotNull(tc, res);
+		CuAssertStrEquals(tc, five, res);
 	}
 
-	for(int i = 0; i < 15000; i++){
+	diff = clock() - start;
+	msec = diff * 1000 / CLOCKS_PER_SEC;
+	printf("Time taken %d[s] %d[ms] for [%d] gets\n", msec/1000, msec%1000, rounds);
 
-		int *res = khmap_get(hm, key1[i]);
+	start = clock();
+	for(int i = 0; i < rounds; i++){
+
+		char *res = khmap_remove(hm, key1[i]);
 		CuAssertPtrNotNull(tc, res);
-		CuAssertIntEquals(tc, five, *res);
+		CuAssertStrEquals(tc, five, res);
+	}
 
-		res = khmap_remove(hm, key1[i]);
-		CuAssertPtrNotNull(tc, res);
-		CuAssertIntEquals(tc, five, *res);
+	diff = clock() - start;
+	msec = diff * 1000 / CLOCKS_PER_SEC;
+	printf("Time taken %d[s] %d[ms] for [%d] removes\n", msec/1000, msec%1000, rounds);
+	
 
-		res = khmap_get(hm, key1[i]);
+	start = clock();
+	for(int i = 0; i < rounds; i++){
+
+		char *res = khmap_get(hm, key1[i]);
 		CuAssertTrue(tc, res == NULL);
 	}
 
-	for(int i = 0; i < 15000; i++){
+	diff = clock() - start;
+	msec = diff * 1000 / CLOCKS_PER_SEC;
+	printf("Time taken %d[s] %d[ms] for [%d] NULL gets\n", msec/1000, msec%1000, rounds);
+
+	/* Cleanup now */
+	for(int i = 0; i < rounds; i++){
 		free(key1[i]);
 	}
 

@@ -23,19 +23,19 @@ typedef enum node_state_e{
 }node_state;
 
 typedef struct khmap_node_t{
-	char *key;                       /* The key */
 	void *data;                      /* The data */
+	char *key;                       /* The key */
 	node_state ns;                   /* Node state */
 }khmap_node;
 
 struct khmap_t{
+	struct khmap_node_t **table;
 	size_t size;                     /* How long is the list */
 	size_t count;                    /* How many live nodes it has */
 	size_t step_prime;             /* The prime used to find the step size */
 	do_hash this_hash;               /* Hashing function */
 	do_cmp this_cmp;                 /* Compare function */
 	do_delete this_delete;           /* Data delete function */
-	struct khmap_node_t **table;
 };
 
 static size_t _hash(char *str){
@@ -194,7 +194,7 @@ void * khmap_get(khmap *hm, void *key){
 
 	while(hm->table[idx]){
 
-		if(hm->table[idx]->ns == USED && (hm->this_cmp(hm->table[idx]->key, key))){
+		if(hm->table[idx]->ns == USED && hm->this_cmp(hm->table[idx]->key, key)){
 			return hm->table[idx]->data;
 		}
 		/* else its been deleted so keep looking */
@@ -215,7 +215,7 @@ void *khmap_remove(khmap *hm, void *key){
 
 	while(hm->table[idx]){
 		
-		if(hm->table[idx]->ns == USED && (hm->this_cmp(hm->table[idx]->key, key))){
+		if(hm->table[idx]->ns == USED && hm->this_cmp(hm->table[idx]->key, key)){
 			hm->table[idx]->ns = DELETED;
 
 			hm->count--;
