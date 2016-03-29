@@ -1,0 +1,12 @@
+language: c
+compiler:
+- clang
+- gcc
+sudo: false
+
+before_install:
+- $CC --version
+
+script:
+- make
+- make test
