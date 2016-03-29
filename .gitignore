@@ -1,0 +1,7 @@
+*.o
+callgrind*
+lib/
+obj/
+*_test
+test/*_test/
+*.dSYM/
